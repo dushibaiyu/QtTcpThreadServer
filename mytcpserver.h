@@ -3,6 +3,8 @@
 
 #include <QTcpServer>
 #include <QtCore>
+#include <QTcpSocket>
+#include <QThread>
 
 class MyTcpServer : public QTcpServer
 {
@@ -12,9 +14,10 @@ public:
     ~MyTcpServer();
 signals:
     void connectClient(int handle, QString & ip, int port );
-    void disConClient(int handle, QString & ip, int port, QArrayData & data);
+    void disConClient(int handle, QString & ip, int port);
+    void sentData(int handle, QString & ip, int port, QArrayData & data);
 public slots:
-    void setData(QVariant & data, int handle);
+    void setData(QArrayData & data, int handle);
 protected:
     void incomingConnection(qintptr socketDescriptor);
 private:
