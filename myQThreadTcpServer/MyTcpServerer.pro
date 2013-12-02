@@ -16,12 +16,13 @@ CONFIG += C++11
 SOURCES += main.cpp\
         mainwindow.cpp \
     mytcpserver.cpp \
-    mytcpsocket.cpp \
-    tcpsocketthread.cpp
+    mytcpsocket.cpp
 
 HEADERS  += mainwindow.h \
     mytcpserver.h \
-    mytcpsocket.h \
-    tcpsocketthread.h
+    mytcpsocket.h
 
 FORMS    += mainwindow.ui
+
+
+TRANSLATIONS = design.ts

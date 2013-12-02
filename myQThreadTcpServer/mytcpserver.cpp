@@ -1,10 +1,9 @@
-#include "mytcpserver.h"
+﻿#include "mytcpserver.h"
 
 MyTcpServer::MyTcpServer(QObject *parent) :
     QTcpServer(parent)
 {
-    tcpClient = new  QMap<int,TcpSocketThread *>;
-//    tcpClient = new  QMap<int,myTcpSocket *>;
+     tcpClient = new  QMap<int,myTcpSocket *>;
      qDebug() <<"MyTcpServer::MyTcpServer THREAD IS：" <<QThread::currentThreadId();
 }
 
@@ -15,68 +14,40 @@ MyTcpServer::~MyTcpServer()
 
 void MyTcpServer::incomingConnection(qintptr socketDescriptor)
 {
-    //moveToThread方法不可用，还是在一个线程中。
-//    QThread * thread = new QThread(this);
-//    myTcpSocket * tcpTemp = new myTcpSocket(socketDescriptor);
-//    connect(tcpTemp,&myTcpSocket::readData,this,&MyTcpServer::readDataSlot);
-//    connect(tcpTemp,&myTcpSocket::sockDisConnect,this,&MyTcpServer::sockDisConnectSlot);
-//    connect(tcpTemp,&myTcpSocket::disconnected,tcpTemp,&myTcpSocket::deleteLater);
-//    connect(tcpTemp,&myTcpSocket::disconnected,thread,&QThread::quit);
-//    connect(tcpTemp,&myTcpSocket::disconnected,thread,&QThread::deleteLater);
-//    tcpTemp->moveToThread(thread);
-//    tcpClient->insert(socketDescriptor,tcpTemp);
-//    qDebug() <<"incomingConnection THREAD IS：" <<QThread::currentThreadId();
-//     emit connectClient(tcpTemp->socketDescriptor(),tcpTemp->peerAddress().toString(),tcpTemp->peerPort());
+    myTcpSocket * tcpTemp = new myTcpSocket(socketDescriptor);
+    QThread * thread = new QThread(tcpTemp);//把线程的父类设为连接的，防止内存泄漏
+    //可以信号连接信号的，我要捕捉线程ID就独立出来函数了，使用中还是直接连接信号效率应该有优势
+    connect(tcpTemp,&myTcpSocket::readData,this,&MyTcpServer::readDataSlot);//接受到数据
+    connect(tcpTemp,&myTcpSocket::sockDisConnect,this,&MyTcpServer::sockDisConnectSlot);//断开连接的处理，从列表移除，并释放断开的Tcpsocket
+    connect(this,&MyTcpServer::sentData,tcpTemp,&myTcpSocket::sentData);//发送数据
+    connect(tcpTemp,&myTcpSocket::disconnected,thread,&QThread::quit);//断开连接时线程退出
+    tcpTemp->moveToThread(thread);//把tcp类移动到新的线程
+    thread->start();//线程开始运行
 
-    qDebug() <<"MyTcpServer::incomingConnection thread is:" << QThread::currentThreadId();
-    TcpSocketThread * tcpTemp = new TcpSocketThread(socketDescriptor,this);
-    //直接连接到server的槽，曹函数在主线程中。
-    connect(tcpTemp,&TcpSocketThread::readData,this,&MyTcpServer::readDataSlot);
-    //lamdba表达式在子线程中
-    connect(tcpTemp,&TcpSocketThread::readData,//this,&MyTcpServer::readDataSlot);
-                    [this](int handle, QString ip, quint16 prot, QByteArray data){
-                        qDebug() <<"MyTcpServer::incomingConnection lambda readData thread is:" << QThread::currentThreadId();
-                        emit readData(handle,ip,prot,data);
-                    });
-    connect(tcpTemp,&TcpSocketThread::sockDisConnect,//this,&MyTcpServer::sockDisConnectSlot);
-                    [this](int handle, QString ip, quint16 prot){
-                        qDebug() <<"MyTcpServer::incomingConnection lambda sockDisConnect thread is:" << QThread::currentThreadId();
-                        tcpClient->remove(handle);
-                        emit sockDisConnect(handle,ip,prot);
-                    });
-    connect(tcpTemp,&TcpSocketThread::socketConnect,//this,&MyTcpServer::socketConnectSolt);
-                    [this](int handle, QString ip, quint16 prot){
-                        qDebug() <<"MyTcpServer::incomingConnection lambda socketConnect thread is:" << QThread::currentThreadId();
-                        emit connectClient(handle,ip,prot);
-                    });
+    tcpClient->insert(socketDescriptor,tcpTemp);//插入到连接信息中
+    qDebug() <<"incomingConnection THREAD IS：" <<QThread::currentThreadId();
 
-
-    tcpClient->insert(socketDescriptor,tcpTemp);
-    tcpTemp->start();
+    //发送连接信号
+    emit connectClient(tcpTemp->socketDescriptor(),tcpTemp->peerAddress().toString(),tcpTemp->peerPort());
 
 }
 
-void MyTcpServer::setData(QByteArray data, int handle)
+void MyTcpServer::setData(const QByteArray &data, const int handle)
 {
-    TcpSocketThread * tmp = tcpClient->find(handle).value();//查找到需要向哪个用户发送消息
-     tmp->writeData(data);//向用户发送消息
-    qDebug() <<"MyTcpServer::setData THREAD IS：" <<QThread::currentThreadId();
-//    connect(this,&MyTcpServer::sentData,tmp,&TcpSocketThread::writeData);
-//    emit sentData(data);// 同样需要跨线程、、唉、
-
-
-//    myTcpSocket * tmp = tcpClient->find(handle).value();//查找到需要向哪个用户发送消息
-//    tmp->write(data);
+    emit sentData(data,handle);
 }
 
-//void MyTcpServer::sockDisConnectSlot(int handle, QString ip, quint16 prot)
-//{
-//     qDebug() <<"MyTcpServer::sockDisConnectSlot thread is:" << QThread::currentThreadId();
-//    tcpClient->remove(handle);
-//    emit sockDisConnect(handle,ip,prot);
-//}
+void MyTcpServer::sockDisConnectSlot(int handle, QString ip, quint16 prot)
+{
+    qDebug() <<"MyTcpServer::sockDisConnectSlot thread is:" << QThread::currentThreadId();
+    myTcpSocket * tcp = tcpClient->value(handle);
+    tcpClient->remove(handle);//连接管理中移除断开连接的socket
+    delete tcp;//释放断开连接的资源、、子对象线程也会释放
+    emit sockDisConnect(handle,ip,prot);
+}
 
-void MyTcpServer::readDataSlot(int handle, QString ip, quint16 prot, QByteArray data)
+void MyTcpServer::readDataSlot(const int handle, const QString &ip, const quint16 prot, const QByteArray &data)
 {
     qDebug() <<"MyTcpServer::readDataSlot() thread is:" << QThread::currentThreadId();
+    emit readData(handle,ip,prot,data);
 }
