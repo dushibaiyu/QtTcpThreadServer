@@ -42,6 +42,8 @@ void MyTcpServer::sockDisConnectSlot(int handle, QString ip, quint16 prot)
     qDebug() <<"MyTcpServer::sockDisConnectSlot thread is:" << QThread::currentThreadId();
     myTcpSocket * tcp = tcpClient->value(handle);
     tcpClient->remove(handle);//连接管理中移除断开连接的socket
+    tcp->thread()->quit();//先退出线程，防止线程运行中释放
+    tcp->thread()->wait();
     delete tcp;//释放断开连接的资源、、子对象线程也会释放
     emit sockDisConnect(handle,ip,prot);
 }
