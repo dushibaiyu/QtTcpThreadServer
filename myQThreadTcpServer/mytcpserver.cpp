@@ -11,16 +11,16 @@ MyTcpServer::MyTcpServer(QObject *parent) :
 
 MyTcpServer::~MyTcpServer()
 {
-    if (tcpClient->size() > 0)
-    {
-        myTcpSocket * tcp;
-        for (auto it = tcpClient->begin();it != tcpClient->end();++it)
-        {
-            tcp = it.value();
-            tcp->disconnectFromHost();
-            delete tcp;
-        }
-    }
+//    if (tcpClient->size() > 0)
+//    {
+//        myTcpSocket * tcp;
+//        for (auto it = tcpClient->begin();it != tcpClient->end();++it)
+//        {
+//            tcp = it.value();
+//            tcp->disconnectFromHost();
+//           delete tcp;
+//        }
+//    }
     delete tcpClient;
 }
 
@@ -55,7 +55,7 @@ void MyTcpServer::sockDisConnectSlot(int handle,const QString & ip, quint16 prot
     myTcpSocket * tcp = tcpClient->value(handle);
     tcpClient->remove(handle);//连接管理中移除断开连接的socket
     ThreadHandle::getClass().removeThread(th); //告诉线程管理类那个线程里的连接断开了
-    delete tcp;//释放断开连接的资源、、子对象线程也会释放
+    delete tcp;//释放断开连接的资源
     emit sockDisConnect(handle,ip,prot);
 }
 

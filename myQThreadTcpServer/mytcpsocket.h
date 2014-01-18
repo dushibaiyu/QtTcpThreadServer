@@ -11,6 +11,7 @@ class myTcpSocket : public QTcpSocket
     Q_OBJECT
 public:
     explicit myTcpSocket(qintptr socketDescriptor,QObject *parent = 0);
+    ~myTcpSocket();
 
 signals:
     void readData(const int,const QString &,const quint16,const QByteArray &);//发送获得用户发过来的数据
@@ -21,6 +22,7 @@ public slots:
 private:
     qintptr socketID;//保存id，== this->socketDescriptor()；但是this->socketDescriptor()客户端断开会被释放，
                         //断开信号用this->socketDescriptor()得不到正确值
+    QMetaObject::Connection dis;
 };
 
 #endif // MYTCPSOCKET_H

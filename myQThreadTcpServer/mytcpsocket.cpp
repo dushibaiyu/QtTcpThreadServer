@@ -11,7 +11,7 @@ myTcpSocket::myTcpSocket(qintptr socketDescriptor, QObject *parent) : //构造�
                 qDebug() << socketID << " myTcpSocket::myTcpSocket lambda readData thread is:" << QThread::currentThreadId();
                 emit readData(socketID,this->peerAddress().toString(),this->peerPort() ,this->readAll());//发送用户发过来的数据
             });
-    connect(this,&myTcpSocket::disconnected, //断开连接的信号转换
+    dis = connect(this,&myTcpSocket::disconnected, //断开连接的信号转换
             [this](){
                 qDebug() << socketID <<"myTcpSocket::myTcpSocket lambda sockDisConnect thread is:" << QThread::currentThreadId();
                 emit sockDisConnect(socketID,this->peerAddress().toString(),this->peerPort(),QThread::currentThread());//发送断开连接的用户信息
@@ -19,6 +19,11 @@ myTcpSocket::myTcpSocket(qintptr socketDescriptor, QObject *parent) : //构造�
 
     qDebug() << this->socketDescriptor() << " " << this->peerAddress().toString()
                 << " " << this->peerPort() << "myTcpSocket::myTcpSocket thread is " <<QThread::currentThreadId();
+}
+
+~myTcpSocket()
+{
+
 }
 
 void myTcpSocket::thisReadData()//收到数据的处理函数
