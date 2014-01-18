@@ -11,6 +11,16 @@ MyTcpServer::MyTcpServer(QObject *parent) :
 
 MyTcpServer::~MyTcpServer()
 {
+    if (tcpClient->size() > 0)
+    {
+        myTcpSocket * tcp;
+        for (auto it = tcpClient->begin();it != tcpClient->end();++it)
+        {
+            tcp = it.value();
+            tcp->disconnectFromHost();
+            delete tcp;
+        }
+    }
     delete tcpClient;
 }
 

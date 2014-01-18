@@ -1,6 +1,6 @@
 ﻿#include "mytcpsocket.h"
 
-myTcpSocket::myTcpSocket(qintptr socketDescriptor, QObject *parent) :
+myTcpSocket::myTcpSocket(qintptr socketDescriptor, QObject *parent) : //构造函数在主线程执行，lambda在子线程
     QTcpSocket(parent),socketID(socketDescriptor)
 {
     this->setSocketDescriptor(socketDescriptor);
