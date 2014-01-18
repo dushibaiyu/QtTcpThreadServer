@@ -21,6 +21,7 @@ public:
 
     QThread * getThread(); //取出应该移入的线程
     void removeThread(QThread *);//连接断开，线程计数减一
+    void clear();//清空计数
     void initThreadType(ThreadType type = THREADSIZE,unsigned int max = 50);//初始化线程管理的方式
 protected:
     void initThreadSize();//新建固定线程和启动

@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+﻿#include "mainwindow.h"
 #include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -77,6 +77,7 @@ void MainWindow::on_pushStart_clicked()
     else
     {
         tcpServer->close();
+        tcpServer->clear();
         this->ui->txtport->setEnabled(true);
         this->ui->pushStart->setText("开始监听");
         this->ui->pushSent->setEnabled(false);

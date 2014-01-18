@@ -11,16 +11,8 @@ MyTcpServer::MyTcpServer(QObject *parent) :
 
 MyTcpServer::~MyTcpServer()
 {
-//    if (tcpClient->size() > 0)
-//    {
-//        myTcpSocket * tcp;
-//        for (auto it = tcpClient->begin();it != tcpClient->end();++it)
-//        {
-//            tcp = it.value();
-//            tcp->disconnectFromHost();
-//           delete tcp;
-//        }
-//    }
+    emit this->sentDisConnect(-1);
+
     delete tcpClient;
 }
 
@@ -32,6 +24,7 @@ void MyTcpServer::incomingConnection(qintptr socketDescriptor) //多线程喜碧
     connect(tcpTemp,&myTcpSocket::readData,this,&MyTcpServer::readDataSlot);//接受到数据
     connect(tcpTemp,&myTcpSocket::sockDisConnect,this,&MyTcpServer::sockDisConnectSlot);//NOTE:断开连接的处理，从列表移除，并释放断开的Tcpsocket，此槽必须实现，线程管理计数也是考的他
     connect(this,&MyTcpServer::sentData,tcpTemp,&myTcpSocket::sentData);//发送数据
+    connect(this,&MyTcpServer::sentDisConnect,tcpTemp,&myTcpSocket::disConTcp);//断开信号
 
     tcpTemp->moveToThread(ThreadHandle::getClass().getThread());//把tcp类移动到新的线程，从线程管理类中获取
 
@@ -63,4 +56,11 @@ void MyTcpServer::readDataSlot(const int handle, const QString &ip, const quint1
 {
     qDebug() <<"MyTcpServer::readDataSlot() thread is:" << QThread::currentThreadId();
     emit readData(handle,ip,prot,data);
+}
+
+void MyTcpServer::clear()
+{
+    emit this->sentDisConnect(-1);
+    ThreadHandle::getClass().clear();
+    tcpClient->clear();
 }

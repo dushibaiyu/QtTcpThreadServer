@@ -21,9 +21,9 @@ myTcpSocket::myTcpSocket(qintptr socketDescriptor, QObject *parent) : //构造�
                 << " " << this->peerPort() << "myTcpSocket::myTcpSocket thread is " <<QThread::currentThreadId();
 }
 
-~myTcpSocket()
+myTcpSocket::~myTcpSocket()
 {
-
+    qDebug() << QString("~myTcpSocket() at %1").arg(socketID) ;
 }
 
 void myTcpSocket::thisReadData()//收到数据的处理函数
@@ -39,5 +39,20 @@ void myTcpSocket::sentData(const QByteArray &data, const int id)
     {
         qDebug() << "myTcpSocket::sentData" << QThread::currentThreadId();
         write(data);
+    }
+}
+
+void myTcpSocket::disConTcp(int i)
+{
+    if (i == socketID)
+    {
+        this->disconnectFromHost();
+    }
+    else if (i == -1) //-1为全部断开
+    {
+        disconnect(dis); //先断开连接的信号槽，防止二次析构
+        this->disconnectFromHost();
+        qDebug() <<QString("disconnectFromHost() at %1").arg(this->socketID);
+        this->~myTcpSocket();//析构此函数
     }
 }

@@ -19,6 +19,7 @@ signals:
 public slots:
     void thisReadData();//处理接收到的数据
     void sentData(const QByteArray & ,const int);//发送信号的槽
+    void disConTcp(int i);//断开信号
 private:
     qintptr socketID;//保存id，== this->socketDescriptor()；但是this->socketDescriptor()客户端断开会被释放，
                         //断开信号用this->socketDescriptor()得不到正确值

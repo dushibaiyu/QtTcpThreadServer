@@ -111,3 +111,11 @@ QThread * ThreadHandle::findThreadSize() //遍历查找所有线程中连接数�
     ilist[j] ++;
     return tlist.at(j);
 }
+
+void ThreadHandle::clear()//仅仅清空计数，线程不释放
+{
+    for (int i = 1; i < ilist.size(); ++i)
+    {
+       ilist[i] = 0;
+    }
+}
