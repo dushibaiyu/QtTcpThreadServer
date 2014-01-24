@@ -8,10 +8,22 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     tcpClient = new QTcpSocket(this);
     ui->pushSent->setEnabled(false);
+    this->ui->timeBut->setEnabled(false);
     tcpClient->abort();
     connect(tcpClient,&QTcpSocket::readyRead,
-            [this](){this->ui->textEdit->append(tr("Server Say：%1").arg(QString(this->tcpClient->readAll())));});
+            [&](){this->ui->textEdit->append(tr("%1 Server Say：%2").arg(QTime::currentTime().toString("hh:mm:ss.zzz")).arg(QString(this->tcpClient->readAll())));});
     connect(tcpClient,SIGNAL(error(QAbstractSocket::SocketError)),this,SLOT(ReadError(QAbstractSocket::SocketError)));
+    connect(&tm,&QTimer::timeout,[&](){
+            int i = qrand() % 6;
+            this->ui->textEdit->append(tr("%1 Timer Sent: %2").arg(QTime::currentTime().toString("hh:mm:ss.zzz")).arg(list.at(i)));
+            tcpClient->write(list.at(i).toUtf8());
+    });
+    list << "我是谁?" << "渡世白玉" << "hello" << "哈哈哈哈哈" << "你是坏蛋!" <<  "测试一下下了" << "不知道写什么" ;
+    QTime time;
+    time= QTime::currentTime();
+    qsrand(time.msec()+time.second()*1000);
+    this->ui->txtIp->setText("127.0.0.1");
+    this->ui->txtPort->setText("6666");
 }
 
 MainWindow::~MainWindow()
@@ -39,6 +51,7 @@ void MainWindow::on_pushConnect_clicked()
             ui->pushSent->setEnabled(true);
             this->ui->txtIp->setEnabled(false);
             this->ui->txtPort->setEnabled(false);
+            this->ui->timeBut->setEnabled(true);
         }
     }
     else
@@ -51,6 +64,10 @@ void MainWindow::on_pushConnect_clicked()
             ui->pushSent->setEnabled(false);
             this->ui->txtIp->setEnabled(true);
             this->ui->txtPort->setEnabled(true);
+            tm.stop();
+            this->ui->timeBut->setEnabled(false);
+            this->ui->lineEdit->setEnabled(true);
+            this->ui->timeBut->setText("启动定时");
         }
     }
 }
@@ -63,7 +80,7 @@ void MainWindow::on_pushSent_clicked()
     {
         return ;
     }
-    tcpClient->write(data.toLatin1());
+    tcpClient->write(data.toUtf8());
     ui->textEdit->append(tr("Say：%1").arg(data));
 }
 
@@ -75,4 +92,31 @@ void MainWindow::ReadError(QAbstractSocket::SocketError)
     ui->pushSent->setEnabled(false);
     this->ui->txtIp->setEnabled(true);
     this->ui->txtPort->setEnabled(true);
+    tm.stop();
+    this->ui->timeBut->setEnabled(false);
+    this->ui->lineEdit->setEnabled(true);
+    this->ui->timeBut->setText("启动定时");
+}
+
+void MainWindow::on_timeBut_clicked()
+{
+    if (this->ui->lineEdit->text().isEmpty())
+    {
+        this->ui->textEdit->append("请输入时间：");
+        return;
+    }
+    if ("启动定时" == this->ui->timeBut->text())
+    {
+        int h = this->ui->lineEdit->text().toInt();
+        h = h*1000;
+        tm.start(h);
+        this->ui->lineEdit->setEnabled(false);
+        this->ui->timeBut->setText("停止定时");
+    }
+    else
+    {
+        tm.stop();
+        this->ui->timeBut->setText("启动定时");
+        this->ui->lineEdit->setEnabled(true);
+    }
 }

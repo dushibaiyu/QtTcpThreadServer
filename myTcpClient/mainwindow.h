@@ -1,4 +1,4 @@
-#ifndef MAINWINDOW_H
+﻿#ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
 #include <QMainWindow>
@@ -22,10 +22,13 @@ public slots:
 
     void on_pushSent_clicked();
     void on_pushConnect_clicked();
+    void on_timeBut_clicked();
 
 private:
     Ui::MainWindow * ui;
     QTcpSocket * tcpClient;
+    QTimer tm;
+    QStringList list;
 };
 
 #endif // MAINWINDOW_H
