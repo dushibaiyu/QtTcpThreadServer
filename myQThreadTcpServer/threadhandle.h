@@ -20,9 +20,10 @@ public:
     static ThreadHandle & getClass(); //返回对象引用，是单例类
 
     QThread * getThread(); //取出应该移入的线程
+    void initThreadType(ThreadType type = HANDLESIZE,unsigned int max = 10);//初始化线程管理的方式
     void removeThread(QThread *);//连接断开，线程计数减一
     void clear();//清空计数
-    void initThreadType(ThreadType type = THREADSIZE,unsigned int max = 50);//初始化线程管理的方式
+
 protected:
     void initThreadSize();//新建固定线程和启动
     QThread * findThreadSize();//固定线程数的查找
@@ -34,6 +35,7 @@ private:
     //两个list的位置要保持绝对的同步
     QList<QThread *> tlist; //存储线程列表
     QList<unsigned int> ilist;//储存线程里的连接数
+    bool initfist;//是否是第一次初始化，只允许初始化一次。
 };
 
 #endif // THREADHANDLE_H
