@@ -19,11 +19,11 @@ CONFIG += C++11
 SOURCES += main.cpp \
     mytcpserver.cpp \
     mytcpsocket.cpp \
-    threadhandle.cpp \
-    pinyinconvert.cpp
+    pinyinconvert.cpp \
+    ../myQThreadTcpServer/threadhandle.cpp
 
 HEADERS += \
     mytcpserver.h \
     mytcpsocket.h \
-    threadhandle.h \
-    pinyinconvert.h
+    pinyinconvert.h \
+    ../myQThreadTcpServer/threadhandle.h

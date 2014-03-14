@@ -4,6 +4,7 @@ ThreadHandle::ThreadHandle()
 {
     tlist.clear();
     ilist.clear();
+    this->size = 20;
     initfist = false;
 }
 
@@ -27,17 +28,14 @@ ThreadHandle & ThreadHandle::getClass()
 
 QThread * ThreadHandle::getThread()
 {
-    if (initfist)
+    if (!initfist)
     {
-        if (type == THREADSIZE)
-            return findThreadSize();
-        else
-            return findHandleSize();
+        initThreadType(HANDLESIZE, 50);
     }
+    if (type == THREADSIZE)
+        return findThreadSize();
     else
-    {
-        initThreadType();
-    }
+        return findHandleSize();
 }
 
 void ThreadHandle::removeThread(QThread * thread)
@@ -65,7 +63,7 @@ void ThreadHandle::initThreadType(ThreadType type, unsigned int max)
         this->type = type;
         this->size = max;
         if (this->size == 0)
-            this->size ++;
+            this->size = 20;
         if (type == THREADSIZE)
             initThreadSize();
         else
@@ -76,6 +74,7 @@ void ThreadHandle::initThreadType(ThreadType type, unsigned int max)
             ilist.append(0);
         }
     }
+    initfist = true;
 }
 
 void ThreadHandle::initThreadSize() //建立好线程并启动，
