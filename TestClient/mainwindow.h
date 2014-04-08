@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 #include <QtCore>
-#include <QtNetwork>
+#include "testsockets.h"
 
 namespace Ui {
 class MainWindow;
@@ -17,18 +17,19 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-public slots:
-    void ReadError(QAbstractSocket::SocketError);
+signals:
+    void con(const QString & str, int port);
+    void discon();
 
-    void on_pushSent_clicked();
+public slots:
     void on_pushConnect_clicked();
     void on_timeBut_clicked();
 
+//    void setdata(const QString & str);
 private:
     Ui::MainWindow * ui;
-    QTcpSocket * tcpClient;
+    TestSockets * tcps = nullptr;
     QTimer tm;
-    QStringList list;
 };
 
 #endif // MAINWINDOW_H

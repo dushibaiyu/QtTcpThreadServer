@@ -4,7 +4,6 @@ myTcpSocket::myTcpSocket(qintptr socketDescriptor, QObject *parent) : //构造�
     QTcpSocket(parent),socketID(socketDescriptor)
 {
     this->setSocketDescriptor(socketDescriptor);
-    cov = new PinYinConvert;
     connect(this,&myTcpSocket::readyRead,
             [&](){
                 QTime time;
@@ -13,10 +12,9 @@ myTcpSocket::myTcpSocket(qintptr socketDescriptor, QObject *parent) : //构造�
 
                 QElapsedTimer tm;
                 tm.start();
-                while(tm.elapsed() < 99)
+                while(tm.elapsed() < 100)
                 {}
 
-                str = cov->convertToPY(str);
                 qDebug() << this->peerAddress().toString() << ":" << this->peerPort() << "@"<<  time.elapsed();
                 this->write(str.toUtf8());
             });
@@ -29,7 +27,6 @@ myTcpSocket::myTcpSocket(qintptr socketDescriptor, QObject *parent) : //构造�
 
 myTcpSocket::~myTcpSocket()
 {
-    delete cov;
 }
 
 

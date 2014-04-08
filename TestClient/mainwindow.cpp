@@ -6,23 +6,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    tcpClient = new QTcpSocket(this);
-    ui->pushSent->setEnabled(false);
     this->ui->timeBut->setEnabled(false);
-    tcpClient->abort();
-    connect(tcpClient,&QTcpSocket::readyRead,
-            [&](){this->ui->textEdit->append(tr("%1 Server Say：%2").arg(QTime::currentTime().toString("hh:mm:ss.zzz")).arg(QString(this->tcpClient->readAll())));});
-    connect(tcpClient,SIGNAL(error(QAbstractSocket::SocketError)),this,SLOT(ReadError(QAbstractSocket::SocketError)));
-    connect(&tm,&QTimer::timeout,[&](){
-            int i = qrand() % 6;
-            this->ui->textEdit->append(tr("%1 Timer Sent: %2").arg(QTime::currentTime().toString("hh:mm:ss.zzz")).arg(list.at(i)));
-            tcpClient->write(list.at(i).toUtf8());
-    });
-    connect(tcpClient,&QTcpSocket::disconnected,[](){qDebug()<< "123333" ;});
-    list << "我是谁?" << "渡世白玉" << "hello" << "哈哈哈哈哈" << "你是坏蛋!" <<  "测试一下下了" << "不知道写什么" ;
-    QTime time;
-    time= QTime::currentTime();
-    qsrand(time.msec()+time.second()*1000);
     this->ui->txtIp->setText("127.0.0.1");
     this->ui->txtPort->setText("6666");
 }
@@ -30,7 +14,6 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
-    delete tcpClient;
 }
 
 void MainWindow::on_pushConnect_clicked()
@@ -44,59 +27,35 @@ void MainWindow::on_pushConnect_clicked()
             this->ui->textEdit->append("请输入IP和端口!");
             return;
         }
-        tcpClient->connectToHost(ipAdd,portd.toInt());
-        if (tcpClient->waitForConnected(1000))
-        {
+            if(tcps == nullptr)
+            {
+                tcps = new TestSockets;
+                connect(this,&MainWindow::con,tcps,&TestSockets::connectsocket);
+                connect(this,&MainWindow::discon,tcps,&TestSockets::disconnectsoc);
+                connect(tcps,&TestSockets::sentstring,[&](const QString & str){this->ui->textEdit->append(str);});
+                connect(&tm,&QTimer::timeout,tcps,&TestSockets::sent);
+            }
+            emit con(this->ui->txtIp->text(),this->ui->txtPort->text().toInt());
             ui->pushConnect->setText("断开");
             ui->textEdit->append("连接服务器成功");
-            ui->pushSent->setEnabled(true);
             this->ui->txtIp->setEnabled(false);
             this->ui->txtPort->setEnabled(false);
             this->ui->timeBut->setEnabled(true);
-        }
+
     }
     else
     {
-        tcpClient->disconnectFromHost();
-        if (tcpClient->state() == QAbstractSocket::UnconnectedState || tcpClient->waitForDisconnected(1000) )
-        {
-            ui->pushConnect->setText("连接");
-            ui->textEdit->append("断开服务器");
-            ui->pushSent->setEnabled(false);
-            this->ui->txtIp->setEnabled(true);
-            this->ui->txtPort->setEnabled(true);
-            tm.stop();
-            this->ui->timeBut->setEnabled(false);
-            this->ui->lineEdit->setEnabled(true);
-            this->ui->timeBut->setText("启动定时");
-        }
-    }
-}
+        ui->pushConnect->setText("连接");
+        ui->textEdit->append("断开服务器");
+        this->ui->txtIp->setEnabled(true);
+        this->ui->txtPort->setEnabled(true);
+        emit this->discon();
+        tm.stop();
+        this->ui->timeBut->setEnabled(false);
+        this->ui->lineEdit->setEnabled(true);
+        this->ui->timeBut->setText("启动定时");
 
-void MainWindow::on_pushSent_clicked()
-{
-    qDebug() << "点击发送：" ;
-    QString data = this->ui->txtData->text();
-    if (data.isEmpty())
-    {
-        return ;
     }
-    tcpClient->write(data.toUtf8());
-    ui->textEdit->append(tr("Say：%1").arg(data));
-}
-
-void MainWindow::ReadError(QAbstractSocket::SocketError)
-{
-    tcpClient->disconnectFromHost();
-    ui->pushConnect->setText("连接");
-    ui->textEdit->append(tr("连接出错：%1").arg(tcpClient->errorString()));
-    ui->pushSent->setEnabled(false);
-    this->ui->txtIp->setEnabled(true);
-    this->ui->txtPort->setEnabled(true);
-    tm.stop();
-    this->ui->timeBut->setEnabled(false);
-    this->ui->lineEdit->setEnabled(true);
-    this->ui->timeBut->setText("启动定时");
 }
 
 void MainWindow::on_timeBut_clicked()

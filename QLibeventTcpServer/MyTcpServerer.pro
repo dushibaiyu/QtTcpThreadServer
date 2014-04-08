@@ -22,8 +22,7 @@ SOURCES += main.cpp\
     eventdispatcher_libevent/eventdispatcher_libevent_config.cpp \
     eventdispatcher_libevent/eventdispatcher_libevent_p.cpp \
     eventdispatcher_libevent/socknot_p.cpp \
-    eventdispatcher_libevent/timers_p.cpp \
-    pinyinconvert.cpp
+    eventdispatcher_libevent/timers_p.cpp
 
 HEADERS  += \
     mytcpserver.h \
@@ -37,10 +36,8 @@ HEADERS  += \
     eventdispatcher_libevent/libevent2-emul.h \
     eventdispatcher_libevent/qt4compat.h \
     eventdispatcher_libevent/tco.h \
-    eventdispatcher_libevent/tco_impl.h \
-    pinyinconvert.h
+    eventdispatcher_libevent/tco_impl.h
 
-FORMS    +=
 
 unix {
         CONFIG += create_pc

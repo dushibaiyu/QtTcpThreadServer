@@ -3,7 +3,7 @@
 
 #include <QtNetwork>
 #include <QtCore>
-#include "pinyinconvert.h"
+//#include "pinyinconvert.h"
 
 class myTcpSocket : public QTcpSocket
 {
@@ -19,7 +19,7 @@ public slots:
     void sentData(const QByteArray & ,const int);//发送信号的槽
     void disConTcp(int i);
 private:
-    PinYinConvert * cov;
+//    PinYinConvert * cov;
     qintptr socketID;
     QMetaObject::Connection dis;
 };
