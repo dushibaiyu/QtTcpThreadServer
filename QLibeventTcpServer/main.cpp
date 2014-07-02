@@ -1,8 +1,8 @@
 ﻿#include <QCoreApplication>
-#include "eventdispatcher_libevent/eventdispatcher_libevent.h"
 #include "mytcpserver.h"
 #include <QDebug>
 #include <iostream>
+#include "eventdispatcher_libevent/eventdispatcher_libevent.h"
 
 void customMessageHandler(QtMsgType type, const QMessageLogContext &context,const QString & msg)
 {
@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
     QCoreApplication::setEventDispatcher(new EventDispatcherLibEvent);
     qInstallMessageHandler(customMessageHandler);
     QCoreApplication a(argc, argv);
-    qDebug() << "Hello Word!" ;
+    qDebug() << "Hello Word!\n" <<  a.eventDispatcher();
     std::cout << "???" << std::endl;
     MyTcpServer ser;
     ser.listen(QHostAddress::Any,6666);

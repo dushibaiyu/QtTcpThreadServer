@@ -1,5 +1,6 @@
 ﻿#include "tcpsocket.h"
 #include <QUuid>
+#include <QDebug>
 
 TcpSocket::TcpSocket(QObject *parent) :
     QTcpSocket(parent)
@@ -20,13 +21,14 @@ void TcpSocket::sent()
     if (this->state() == QAbstractSocket::ConnectedState)
     {
         this->write(QUuid::createUuid().toByteArray());
+        tm.start();
     }
 }
 
 void TcpSocket::ReadError(QAbstractSocket::SocketError)
 {
     QString str(QString::number(this->peerPort()));
-    str += " : ";
+    str += " : erro : ";
     str += this->errorString();
     emit senterro(str);
 }

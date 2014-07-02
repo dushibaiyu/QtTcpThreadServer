@@ -2,6 +2,7 @@
 #define TCPSOCKET_H
 
 #include <QTcpSocket>
+#include <QTime>
 
 
 class TcpSocket : public QTcpSocket
@@ -18,6 +19,9 @@ public slots:
     void sent();
 
     void ReadError(QAbstractSocket::SocketError);
+
+protected:
+    QTime tm;
 };
 
 #endif // TCPSOCKET_H

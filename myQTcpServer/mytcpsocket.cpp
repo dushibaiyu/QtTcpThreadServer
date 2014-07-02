@@ -4,21 +4,20 @@ myTcpSocket::myTcpSocket(qintptr socketDescriptor, QObject *parent) : //构造�
     QTcpSocket(parent),socketID(socketDescriptor)
 {
     this->setSocketDescriptor(socketDescriptor);
-//    cov = new PinYinConvert;
     connect(this,&myTcpSocket::readyRead,
             [&](){
-        QTime time;
-        time.start();
-        QString str(this->readAll());
+                QTime time;
+                time.start();
+                QString str(this->readAll());
 
-        QElapsedTimer tm;
-        tm.start();
-        while(tm.elapsed() < 100)
-        {}
+                QElapsedTimer tm;
+                tm.start();
+                while(tm.elapsed() < 100)
+                {}
 
-        qDebug() << this->peerAddress().toString() << ":" << this->peerPort() << "@"<<  time.elapsed();
-        this->write(str.toUtf8());
-    });
+                qDebug() << this->peerAddress().toString() << ":" << this->peerPort() << "@"<<  time.elapsed() << "  " << this->thread()->eventDispatcher();
+                this->write(str.toUtf8());
+            });
     dis = connect(this,&myTcpSocket::disconnected,
             [&](){
                 emit sockDisConnect(socketID,this->peerAddress().toString(),this->peerPort(),QThread::currentThread());//发送断开连接的用户信息
@@ -28,7 +27,6 @@ myTcpSocket::myTcpSocket(qintptr socketDescriptor, QObject *parent) : //构造�
 
 myTcpSocket::~myTcpSocket()
 {
-//    delete cov;
 }
 
 

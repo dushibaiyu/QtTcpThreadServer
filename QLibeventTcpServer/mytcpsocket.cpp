@@ -15,7 +15,7 @@ myTcpSocket::myTcpSocket(qintptr socketDescriptor, QObject *parent) : //构造�
                 while(tm.elapsed() < 100)
                 {}
 
-                qDebug() << this->peerAddress().toString() << ":" << this->peerPort() << "@"<<  time.elapsed();
+                qDebug() << this->peerAddress().toString() << ":" << this->peerPort() << "@"<<  time.elapsed() << "  " << this->thread()->eventDispatcher();
                 this->write(str.toUtf8());
             });
     dis = connect(this,&myTcpSocket::disconnected,

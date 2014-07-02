@@ -4,6 +4,7 @@
 #include <QThread>
 #include <QVector>
 #include <QList>
+#include "eventdispatcher_libevent/eventdispatcher_libevent.h"
 //线程管理类，类似于一个线程池，单例类
 //两种初始化方式，一种是每个线程处理的连接数，一个是一共多少个线程
 class ThreadHandle
