@@ -16,7 +16,7 @@ MyTcpServer::~MyTcpServer()
     delete tcpClient;
 }
 
-void MyTcpServer::incomingConnection(qintptr socketDescriptor) //多线程喜碧在此函数里捕获新连接
+void MyTcpServer::incomingConnection(qintptr socketDescriptor) //多线程必须在此函数里捕获新连接
 {
     myTcpSocket * tcpTemp = new myTcpSocket(socketDescriptor);
 

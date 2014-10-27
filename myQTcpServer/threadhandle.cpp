@@ -15,7 +15,7 @@ ThreadHandle::~ThreadHandle() //停止所有线程，并释放资源
     {
         tmp = tlist.at(i);
         tmp->exit();
-        tmp->wait();
+        tmp->wait(3000);
         delete tmp;
     }
 }
@@ -50,7 +50,7 @@ void ThreadHandle::removeThread(QThread * thread)
             QThread * tmp = tlist.at(t);
             tlist.removeAt(t);
             tmp->exit();
-            tmp->wait();
+            tmp->wait(3000);
             delete tmp;
         }
     }
