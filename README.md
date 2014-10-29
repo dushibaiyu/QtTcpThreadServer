@@ -19,6 +19,7 @@ QtTcp---Server
 
     
 ==============
+ QLibeventTcpServer移到了old分支
     Qt的线程里的事件循环和主线程的事件循环所用的事件选择器不是一个时间选择器的，Qt默认的事件循环和I/O复用是seclect，Linux默认用的Glib，是poll，所以做大量长连接不是十分适合，
     但是，Qt把选择器单独可以自定义的。QLibeventTcpServer：是以libevent的事件循环来替代Qt的，libevent在linux下是epoll，所以替换为libevent的会有点优势的，
     只是，需要在每个线程都要替换下。
