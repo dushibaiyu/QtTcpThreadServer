@@ -1,6 +1,9 @@
 ﻿#include <QCoreApplication>
 #include "mytcpserver.h"
 #include <QDebug>
+#include <QFile>
+#include <QDir>
+#include <QTextStream>
 #include <iostream>
 
 void customMessageHandler(QtMsgType type, const QMessageLogContext &context,const QString & msg)
@@ -41,9 +44,8 @@ int main(int argc, char *argv[])
 {
     qInstallMessageHandler(customMessageHandler);
     QCoreApplication a(argc, argv);
-    qDebug() << "Hello Word!\n" <<  a.eventDispatcher();
     std::cout << "???" << std::endl;
-    MyTcpServer ser;
+    TcpServer ser;
     ser.listen(QHostAddress::Any,6666);
 
     return a.exec();
