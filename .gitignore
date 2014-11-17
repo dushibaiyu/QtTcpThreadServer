@@ -15,3 +15,4 @@
 
 /myQThreadTcpServer/*.user
 /myQTcpServer/*.user
+*.user

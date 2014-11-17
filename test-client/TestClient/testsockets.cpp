@@ -6,7 +6,7 @@ TestSockets::TestSockets(QObject *parent) :
     QThread * th;
     th = new QThread(this);
     th->start();
-    for (int i = 1; i <= 1000 ; ++i)
+    for (int i = 1; i <= 1 ; ++i)
     {
         TcpSocket * tmp = new TcpSocket;
         connect(this,&TestSockets::connectsocket,tmp,&TcpSocket::cth);

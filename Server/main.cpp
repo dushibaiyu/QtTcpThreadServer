@@ -1,5 +1,5 @@
 ﻿#include <QCoreApplication>
-#include "mytcpserver.h"
+#include "tcpserver.h"
 #include <QDebug>
 #include <QFile>
 #include <QDir>
@@ -42,11 +42,11 @@ void customMessageHandler(QtMsgType type, const QMessageLogContext &context,cons
 
 int main(int argc, char *argv[])
 {
-    qInstallMessageHandler(customMessageHandler);
+//    qInstallMessageHandler(customMessageHandler);
     QCoreApplication a(argc, argv);
     std::cout << "???" << std::endl;
     TcpServer ser;
-    ser.listen(QHostAddress::Any,6666);
+    ser.listen(QHostAddress::Any,8888);
 
     return a.exec();
 }

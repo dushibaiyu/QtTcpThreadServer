@@ -29,23 +29,23 @@ void TcpServer::incomingConnection(qintptr socketDescriptor) //多线程必须�
         tcp.disconnectFromHost();
         return;
     }
+    auto th = ThreadHandle::getClass().getThread();
     auto tcpTemp = new TcpSocket(socketDescriptor);
     QString ip =  tcpTemp->peerAddress().toString();
     qint16 port = tcpTemp->peerPort();
-    tcpTemp->moveToThread(ThreadHandle::getClass().getThread());//把tcp类移动到新的线程，从线程管理类中获取
+
     connect(tcpTemp,&TcpSocket::sockDisConnect,this,&TcpServer::sockDisConnectSlot);//NOTE:断开连接的处理，从列表移除，并释放断开的Tcpsocket，此槽必须实现，线程管理计数也是考的他
     connect(this,&TcpServer::sentDisConnect,tcpTemp,&TcpSocket::disConTcp);//断开信号
 
+    tcpTemp->moveToThread(th);//把tcp类移动到新的线程，从线程管理类中获取
     tcpClient->insert(socketDescriptor,tcpTemp);//插入到连接信息中
     emit connectClient(socketDescriptor,ip,port);
 }
 
 void TcpServer::sockDisConnectSlot(int handle,const QString & ip, quint16 prot,QThread * th)
 {
-    TcpSocket * tcp = tcpClient->value(handle);
     tcpClient->remove(handle);//连接管理中移除断开连接的socket
     ThreadHandle::getClass().removeThread(th); //告诉线程管理类那个线程里的连接断开了
-    delete tcp;//释放断开连接的资源
     emit sockDisConnect(handle,ip,prot);
 }
 
