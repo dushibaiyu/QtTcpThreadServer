@@ -14,13 +14,14 @@ CONFIG   += console
 CONFIG   -= app_bundle
 CONFIG   += C++11
 
-SOURCES += main.cpp\
-    tcpserver.cpp \
-    tcpsocket.cpp \
-    threadhandle.cpp 
+SOURCES += $$PWD/main.cpp\
+    $$PWD/tcpserver.cpp \
+    $$PWD/tcpsocket.cpp \
+    $$PWD/threadhandle.cpp
 
 HEADERS  += \
-    tcpserver.h \
-    tcpsocket.h \
-    threadhandle.h 
+    $$PWD/tcpserver.h \
+    $$PWD/tcpsocket.h \
+    $$PWD/threadhandle.h
 
+unix:include($$PWD/eventdispatcher_libev/eventdispatcher_libev.pri)

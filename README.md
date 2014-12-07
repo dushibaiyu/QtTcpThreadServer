@@ -25,9 +25,7 @@ QtConcurrent ： 负责处理发送过来的数据。(动态的线程数目。)
 
 ===========================
 Next：
-    Qt的事件循环在win下是基于select的，在类unix下，如果有glib则是基于glib，否则也是基于select的，glib在linux下用的poll。
-    这些均不是平台最优的I/O复用。
-    下一步，使用其他事件循环替代Qt默认的时间循环。
+    重新设计下线程模型，现有的movetothread不是很好。
     
 ==============
  QLibeventTcpServer移到了old分支

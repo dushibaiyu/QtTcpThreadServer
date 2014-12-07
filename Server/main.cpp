@@ -5,6 +5,7 @@
 #include <QDir>
 #include <QTextStream>
 #include <iostream>
+#include "eventdispatcher_libev/eventdispatcher_libev.h"
 
 void customMessageHandler(QtMsgType type, const QMessageLogContext &context,const QString & msg)
 {
@@ -43,10 +44,11 @@ void customMessageHandler(QtMsgType type, const QMessageLogContext &context,cons
 int main(int argc, char *argv[])
 {
 //    qInstallMessageHandler(customMessageHandler);
+    QCoreApplication::setEventDispatcher(new EventDispatcherLibEv());
     QCoreApplication a(argc, argv);
     std::cout << "???" << std::endl;
     TcpServer ser;
-    ser.listen(QHostAddress::Any,8888);
+    ser.listen(QHostAddress::Any,6666);
 
     return a.exec();
 }

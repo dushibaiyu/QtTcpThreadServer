@@ -1,4 +1,5 @@
 ﻿#include "threadhandle.h"
+#include "eventdispatcher_libev/eventdispatcher_libev.h"
 
 ThreadHandle::ThreadHandle()
 {
@@ -70,6 +71,7 @@ void ThreadHandle::initThreadType(ThreadType type, unsigned int max)
         else
         {
             QThread * tmp = new QThread;
+            tmp->setEventDispatcher(new EventDispatcherLibEv());
             threadSize.insert(tmp,0);
             tmp->start();
         }
@@ -83,6 +85,7 @@ void ThreadHandle::initThreadSize() //建立好线程并启动，
     for (unsigned int i = 0; i < size;++i)
     {
         tmp = new QThread;   
+        tmp->setEventDispatcher(new EventDispatcherLibEv());
         threadSize.insert(tmp,0);
         tmp->start();
     }
@@ -99,6 +102,7 @@ QThread * ThreadHandle::findHandleSize() //查找到线程里的连接数小于�
         }
     }
     QThread * tmp = new QThread;
+    tmp->setEventDispatcher(new EventDispatcherLibEv());
     threadSize.insert(tmp,1);
     tmp->start();
     return tmp;
