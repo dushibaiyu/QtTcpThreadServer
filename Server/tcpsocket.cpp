@@ -10,6 +10,7 @@ TcpSocket::TcpSocket(qintptr socketDescriptor, QObject *parent) : //构造函数
     connect(this,&TcpSocket::readyRead,this,&TcpSocket::readData);
     dis = connect(this,&TcpSocket::disconnected,
         [&](){
+            qDebug() << "disconnect" ;
             emit sockDisConnect(socketID,this->peerAddress().toString(),this->peerPort(),QThread::currentThread());//发送断开连接的用户信息
             this->deleteLater();
         });
@@ -47,13 +48,14 @@ void TcpSocket::disConTcp(int i)
 
 void TcpSocket::readData()
 {
-    datas.append(this->readAll());
-//       auto data  = handleData(this->readAll(),this->peerAddress().toString(),this->peerPort());
-//       this->write(data);
-    if (!watcher.isRunning())//放到异步线程中处理。
-    {
-        watcher.setFuture(QtConcurrent::run(this,&TcpSocket::handleData,datas.dequeue(),this->peerAddress().toString(),this->peerPort()));
-    }
+//    datas.append(this->readAll());
+    auto data  = handleData(this->readAll(),this->peerAddress().toString(),this->peerPort());
+    qDebug() << data;
+    this->write(data);
+//    if (!watcher.isRunning())//放到异步线程中处理。
+//    {
+//        watcher.setFuture(QtConcurrent::run(this,&TcpSocket::handleData,datas.dequeue(),this->peerAddress().toString(),this->peerPort()));
+//    }
 }
 
 QByteArray TcpSocket::handleData(QByteArray data, const QString &ip, qint16 port)

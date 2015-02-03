@@ -22,7 +22,7 @@ public:
     static ThreadHandle & getClass(); //返回对象引用，是单例类
 
     QThread * getThread(); //取出应该移入的线程
-    void initThreadType(ThreadType type = HANDLESIZE,unsigned int max = 10);//初始化线程管理的方式
+    void initThreadType(ThreadType type = HANDLESIZE,unsigned int max = 1000);//初始化线程管理的方式
     void removeThread(QThread *);//连接断开，线程计数减一
     void clear();//清空计数
 
