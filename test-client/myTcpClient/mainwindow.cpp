@@ -76,7 +76,7 @@ void MainWindow::on_pushConnect_clicked()
 void MainWindow::on_pushSent_clicked()
 {
     qDebug() << "点击发送：" ;
-    QString data = this->ui->txtData->text();
+    QString data = this->ui->txtData->toPlainText();//->text();
     if (data.isEmpty())
     {
         return ;
